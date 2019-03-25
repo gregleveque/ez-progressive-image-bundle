@@ -1,0 +1,12 @@
+parameters:
+    ez.progressive.image.twig.extension.class: Gie\EzProgressiveImageBundle\Twig\ImageExtension
+    ez.progressive.image.placeholder.variation.name: 'ez_progressive_placeholder'
+
+services:
+    ez.progressive.image.twig.extension:
+        class: '%ez.progressive.image.twig.extension.class%'
+        parent: ezpublish.twig.extension.image
+        calls:
+            - [setConfig, ['%kernel.project_dir%/web', '%ez.progressive.image.placeholder.variation.name%']]
+        tags:
+             - { name: twig.extension }
