@@ -43,7 +43,6 @@
                 <img
                         class="ez-progressive-image"
                         src="{{ image_alias.uri }}"
-                        {% if parameters.src ?? {} is not empty %}cd
                         alt="{{ parameters.alt ?? field.value.alternativeText | e('html_attr') }}"
                         onload="this.style.opacity = 1; this.previousElementSibling.style.opacity = 0;"
                 />
