@@ -1,0 +1,41 @@
+.ez-progressive {
+  max-width: 100%;
+  position: relative;
+  overflow: hidden;
+
+  img, figcaption {
+    width: 100%;
+    height: auto;
+    position: absolute;
+    top: 0;
+    left: 0;
+  }
+
+  img {
+    transition: opacity ease 1s;
+  }
+
+  .ez-progressive-placeholder {
+    position: inherit;
+    filter: blur(10px);
+    opacity: 1;
+  }
+  .ez-progressive-image {
+    opacity: 0;
+  }
+
+  figcaption {
+    transition: opacity ease 0.5s;
+    opacity: 0;
+    top: auto;
+    bottom: 0;
+    padding: 0.5em 1em;
+    background-color: #222222;
+    background-color: rgba(0,0,0,0.5);
+    color: white;
+  }
+
+  &:hover figcaption {
+    opacity: 1;
+  }
+}

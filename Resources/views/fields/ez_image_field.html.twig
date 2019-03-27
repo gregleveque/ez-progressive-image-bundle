@@ -1,55 +1,62 @@
 {# This field accepts the following parameters:
- #   - alias (image variation name). Defaults to "original" (e.g. image originally uploaded)
- #   - parameters.width. Allows forcing width of the image in the HTML
- #   - parameters.height. Allows forcing height of the image in the HTML
- #   - parameters.class. Allows setting CSS custom class name for the image
+ #   - parameters:
+ #      - alias         (string)        Defaults to "original" (e.g. image originally uploaded)
+ #      - class         (string)        Allows setting CSS custom class name for the figure element
+ #      - width         (int|string)    Allows forcing width of the image in the HTML
+ #      - height        (int|string)    Allows forcing height of the image in the HTML
+ #      - exact         (bool)          Allows forcing height and width of the 'alias' to the figure element
+ #      - caption       (string)        Allows adding a caption to the figure element
+ #      - alt           (string)        Allows adding an alternative text on img elements
+ #      - link          (object)        Allows setting a link on the figure element
+ #          - href      (string)
+ #          - title     (string)
+ #          - target    (string)
  #}
+
 {% block ezimage_field %}
-    {% spaceless %}
-        {% if not ez_is_field_empty( content, field ) %}
-            <figure {{ block( 'field_attributes' ) }} style="position: relative;overflow: hidden;">
-                {% set imageAlias = ez_image_alias( field, versionInfo, parameters.alias|default( 'original' ) ) %}
-                {% set placeholder = ez_image_alias( field, versionInfo, 'ez_progressive_placeholder' ) %}
-                {% set ratio = ((parameters.maxHeight ?? imageAlias.height) / (parameters.maxWidth ?? imageAlias.width)) * 100 %}
-                {% set src = imageAlias ? asset( imageAlias.uri ) : "//:0" %}
-                {% set attrs = {
-                    class: parameters.class|default(''),
-                    height: parameters.height is defined ? parameters.height : (imageAlias ? imageAlias.height : ''),
-                    width: parameters.width is defined ? parameters.width : (imageAlias ? imageAlias.width : ''),
-                } %}
-                {% if parameters.ezlink|default({}) is not empty %}
-                <a
-                    href="{{ parameters.ezlink.href }}"
-                    {% if parameters.ezlink.title is defined %} title="{{ parameters.ezlink.title|e('html_attr') }}"{% endif %}
-                    {% if parameters.ezlink.target is defined %} target="{{ parameters.ezlink.target|e('html_attr') }}"{% endif %}
-                >
-                    {% endif %}
-
-                    <div style="padding-bottom: {{ ratio ~ '%' }}"></div>
-                    <img
-                        style="filter: blur(10px);position: absolute;top: 0;left: 0;transition: opacity ease 1s;opacity: 1;"
-                        src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info.base64 -}}"
-                        alt="{{ parameters.alternativeText|default(field.value.alternativeText) }}" {% for attrname, attrvalue in attrs if attrvalue %}{{ attrname }}="{{ attrvalue }} " {% endfor %}
-                    />
-                    <img
-                        style="position: absolute;top: 0;left: 0;transition: all ease 1s;opacity: 0;"
-                        src="{{ imageAlias.uri }}"
-                        alt="{{ imageAlias.alternativeText|default(field.value.alternativeText) }}"
-                        onload="this.style.opacity = 1; this.previousElementSibling.style.opacity = 0;" {% for attrname, attrvalue in attrs if attrvalue %}{{ attrname }}="{{ attrvalue }} " {% endfor %}
-                    />
-
-                    {% if parameters.ezlink|default({}) is not empty %}
-                </a>
-                {% endif %}
-            </figure>
-        {% endif %}
-    {% endspaceless %}
-{% endblock %}
-
-{# Block for field attributes rendering. Useful to add a custom class, id or whatever HTML attribute to the field markup #}
-{% block field_attributes %}
 {% spaceless %}
-    {% set attr = attr|default( {} ) %}
-    {% for attrname, attrvalue in attr %}{{ attrname }}="{{ attrvalue }}" {% endfor %}
+    {% if not ez_is_field_empty( content, field ) %}
+        {% set exact_fit = parameters.exact ?? parameters.width ?? parameters.height ?? false %}
+        {% set image_alias = ez_image_alias( field, versionInfo, parameters.alias ?? 'original' ) %}
+        {% set placeholder = ez_image_alias( field, versionInfo, 'ez_progressive_placeholder' ) %}
+        {% set src = image_alias ? asset( image_alias.uri ) : '//:0' %}
+        {% set attributes = {
+            class: "ez-progressive #{attr.class ?? ''} #{parameters.class ?? ''}" | trim,
+            style: "height: #{parameters.height ?? image_alias.height}px; width: #{parameters.width ?? image_alias.width}px",
+        } %}
+
+        <figure class="{{ attributes.class | e('html_attr') }}" {% if exact_fit %}style="{{ attributes.style | e('html_attr') }}"{% endif %}>
+            {% if parameters.link ?? {} is not empty %}
+            <a
+                    href="{{ parameters.link.href ?? '/' }}"
+                    {% if parameters.link.title is defined %} title="{{ parameters.link.title | e('html_attr') }}"{% endif %}
+                    {% if parameters.link.target is defined %} target="{{ parameters.link.target | e('html_attr') }}"{% endif %}
+                    {% if parameters.link.target is defined and parameters.link.target == '_blank' %} rel="noreferrer noopener"{% endif %}
+            >
+                {% endif %}
+
+                <img
+                        class="ez-progressive-placeholder"
+                        src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info.base64 -}}"
+                        alt="{{ parameters.alt ?? field.value.alternativeText | e('html_attr') }}"
+                />
+                <img
+                        class="ez-progressive-image"
+                        src="{{ image_alias.uri }}"
+                        {% if parameters.src ?? {} is not empty %}cd
+                        alt="{{ parameters.alt ?? field.value.alternativeText | e('html_attr') }}"
+                        onload="this.style.opacity = 1; this.previousElementSibling.style.opacity = 0;"
+                />
+
+                {% if parameters.caption ?? '' %}
+                    <figcaption >{{ parameters.caption }}</figcaption>
+                {% endif %}
+
+
+                {% if parameters.ezlink ?? {} is not empty %}
+            </a>
+            {% endif %}
+        </figure>
+    {% endif %}
 {% endspaceless %}
 {% endblock %}
