@@ -3,16 +3,26 @@
 namespace Gie\EzProgressiveImageBundle\Twig;
 
 use eZ\Publish\Core\MVC\Symfony\Templating\Twig\Extension\ImageExtension as BaseImageExtension;
+use eZ\Bundle\EzPublishCoreBundle\Imagine\VariationPathGenerator;
+use eZ\Publish\Core\IO\IOServiceInterface;
 use eZ\Publish\API\Repository\Values\Content\Field;
 use eZ\Publish\API\Repository\Values\Content\VersionInfo;
 use eZ\Publish\SPI\Variation\Values\ImageVariation;
+use eZ\Publish\Core\Base\Exceptions\NotFoundException;
+use eZ\Publish\Core\Base\Exceptions\InvalidArgumentValue;
 
 class ImageExtension extends BaseImageExtension
 {
+
     /**
-     * @var string $webDir
+     * @var \eZ\Bundle\EzPublishCoreBundle\Imagine\VariationPathGenerator
      */
-    protected $webDir;
+    private $variationPathGenerator;
+
+    /**
+     * @var \eZ\Publish\Core\IO\IOServiceInterface
+     */
+    private $ioService;
 
     /**
      * @var string $placeholderVariationName
@@ -20,12 +30,17 @@ class ImageExtension extends BaseImageExtension
     protected $placeholderVariationName;
 
     /**
-     * @param string $webDir
+     * @param VariationPathGenerator $variationPathGenerator
+     * @param IOServiceInterface $ioService
      * @param string $placeholderVariationName
      */
-    public function setConfig(string $webDir, string $placeholderVariationName)
-    {
-        $this->webDir = $webDir;
+    public function setConfig(
+        VariationPathGenerator $variationPathGenerator,
+        IOServiceInterface $ioService,
+        string $placeholderVariationName
+    ) {
+        $this->variationPathGenerator = $variationPathGenerator;
+        $this->ioService = $ioService;
         $this->placeholderVariationName = $placeholderVariationName;
     }
 
@@ -37,33 +52,52 @@ class ImageExtension extends BaseImageExtension
      * @param string $variationName
      *
      * @return \eZ\Publish\SPI\Variation\Values\Variation|null
+     * @throws InvalidArgumentValue
+     * @throws NotFoundException
      */
     public function getImageVariation(Field $field, VersionInfo $versionInfo, $variationName)
     {
         /** @var ImageVariation $imageVariation */
         $imageVariation = parent::getImageVariation($field, $versionInfo, $variationName);
-        $imagePath = $this->webDir . parse_url($imageVariation->uri, PHP_URL_PATH);
-        $imageInfo = getimagesize($imagePath);
-
-        $base64 = $variationName === $this->placeholderVariationName
-            ? base64_encode(file_get_contents($imagePath))
-            : null;
+        $base64 = $this->getBase64($field->value->id, $variationName);
 
         return new ImageVariation(
             [
-                'name' => $imageVariation->name,
-                'fileName' => $imageVariation->fileName,
-                'dirPath' => $imageVariation->dirPath,
-                'uri' => preg_replace('/https?:/', '', $imageVariation->uri),
-                'imageId' => $imageVariation->imageId,
-                'mimeType' => $imageInfo['mime'],
-                'width' => $imageVariation->width ?? $imageInfo[0],
-                'height' => $imageVariation->height ?? $imageInfo[1],
-                'info' => [
-                    'style' => $imageInfo[3],
-                    'base64' => $base64,
-                ]
+                'width'         => $imageVariation->width,
+                'height'        => $imageVariation->height,
+                'name'          => $imageVariation->name,
+                'imageId'       => $imageVariation->imageId,
+                'uri'           => preg_replace('/https?:/', '', $imageVariation->uri),
+                'dirPath'       => $imageVariation->dirPath,
+                'fileName'      => $imageVariation->fileName,
+                'fileSize'      => $imageVariation->fileSize,
+                'mimeType'      => $imageVariation->mimeType,
+                'lastModified'  => $imageVariation->lastModified,
+                'info'          => $base64,
             ]
         );
+    }
+
+    /**
+     * @param string $originalPath
+     * @param string $variationName
+     * @return string|null
+     * @throws InvalidArgumentValue
+     * @throws NotFoundException
+     */
+    private function getBase64(string $originalPath, string $variationName)
+    {
+        if ($variationName === $this->placeholderVariationName) {
+            $variationPath = $this->variationPathGenerator->getVariationPath(
+                $originalPath,
+                $variationName
+            );
+
+            $variationBinaryFile = $this->ioService->loadBinaryFile($variationPath);
+
+            return base64_encode($this->ioService->getFileContents($variationBinaryFile));
+        }
+
+        return null;
     }
 }

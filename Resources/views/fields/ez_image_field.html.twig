@@ -37,13 +37,12 @@
 
                 <img
                         class="ez-progressive-placeholder"
-                        src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info.base64 -}}"
+                        src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info -}}"
                         alt="{{ parameters.alt ?? field.value.alternativeText | e('html_attr') }}"
                 />
                 <img
                         class="ez-progressive-image"
                         src="{{ image_alias.uri }}"
-                        {% if parameters.src ?? {} is not empty %}cd
                         alt="{{ parameters.alt ?? field.value.alternativeText | e('html_attr') }}"
                         onload="this.style.opacity = 1; this.previousElementSibling.style.opacity = 0;"
                 />

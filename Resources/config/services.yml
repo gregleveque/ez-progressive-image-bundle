@@ -7,6 +7,10 @@ services:
         class: '%ez.progressive.image.twig.extension.class%'
         parent: ezpublish.twig.extension.image
         calls:
-            - [setConfig, ['%kernel.project_dir%/web', '%ez.progressive.image.placeholder.variation.name%']]
+            - method: setConfig
+              arguments:
+                - '@ezpublish.image_alias.variation_path_generator'
+                - '@ezpublish.fieldType.ezimage.io_service'
+                - '%ez.progressive.image.placeholder.variation.name%'
         tags:
              - { name: twig.extension }
