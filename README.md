@@ -32,7 +32,7 @@ class AppKernel extends Kernel
         $bundles = array(
             // ...
 
-            new Gie\EzProgressiveImageBundle(),
+            new Gie\EzProgressiveImageBundle\EzProgressiveImageBundle(),
         );
 
         // ...
@@ -50,3 +50,18 @@ class AppKernel extends Kernel
 }) }}
 ```
 
+### Parameters
+
+| Parameter | Type        | Description                                                          |
+| --------- | ----------- | -------------------------------------------------------------------- |
+| alias     | string      | Defaults to "original" (e.g. image originally uploaded)              |
+| class     | string      | Allows setting CSS custom class name for the figure element          |
+| width     | int, string | Allows forcing width of the image in the HTML                        |
+| height    | int, string | Allows forcing height of the image in the HTML                       |
+| exact     | bool        | Allows forcing height and width of the 'alias' to the figure element |
+| caption   | string      | Allows adding a caption to the figure element                        |
+| alt       | string      | Allows adding an alternative text on img elements                    |
+| link      | object      | Allows setting a link on the figure element                          |
+| * href    | string      |                                                                      |
+| * title   | string      |                                                                      |
+| * target  | string      |                                                                      |
