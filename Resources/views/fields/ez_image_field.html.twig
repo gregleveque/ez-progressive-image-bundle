@@ -48,7 +48,7 @@
                 />
 
                 {% if parameters.caption ?? '' %}
-                    <figcaption >{{ parameters.caption }}</figcaption>
+                    <figcaption >{{ parameters.caption|raw }}</figcaption>
                 {% endif %}
 
 
