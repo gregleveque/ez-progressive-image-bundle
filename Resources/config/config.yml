@@ -5,7 +5,7 @@ system:
                 reference: null
                 filters:
                     -
-                        name: geometry/scaledownonly
+                        name: geometry/scale
                         params: [24, 24]
         field_templates:
             -

@@ -37,12 +37,13 @@
 
                 <img
                         class="ez-progressive-placeholder"
+                        style="max-height: {{parameters.height ?? image_alias.height}}px;"
                         src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info -}}"
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
                 />
                 <img
-                        class="ez-progressive-image"
-                        src="{{ image_alias.uri }}"
+                        class="ez-progressive-image lazyload"
+                        data-src="{{ image_alias.uri }}"
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
                         onload="this.style.opacity = 1;this.previousElementSibling.style.opacity = 0;"
                 />
