@@ -37,7 +37,7 @@
 
                 <img
                         class="ez-progressive-placeholder"
-                        style="max-height: {{parameters.height ?? image_alias.height}}px;"
+                        style="height: {{parameters.height ?? image_alias.height}}px;"
                         src="{{- 'data:' ~ placeholder.mimeType ~ ';base64,' ~ placeholder.info -}}"
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
                 />
@@ -49,7 +49,7 @@
                 />
 
                 {% if parameters.caption ?? '' %}
-                    <figcaption >{{ parameters.caption }}</figcaption>
+                    <figcaption >{{ parameters.caption | raw }}</figcaption>
                 {% endif %}
 
 
