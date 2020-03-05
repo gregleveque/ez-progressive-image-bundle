@@ -25,7 +25,7 @@
             style: "height: #{parameters.height ?? image_alias.height}px; width: #{parameters.width ?? image_alias.width}px",
         } %}
 
-        <figure class="{{ attributes.class | e('html_attr') }}" {% if exact_fit %}style="{{ attributes.style | e('html_attr') }}"{% endif %}>
+        <figure class="{{ attributes.class | e('html_attr') }}" style="{{ exact_fit ? attributes.style | e('html_attr') : 'height: ' ~ parameters.height ?? image_alias.height ~ 'px;'}}">
             {% if parameters.link ?? {} is not empty %}
             <a
                     href="{{ parameters.link.href ?? '//:0' }}"
@@ -45,7 +45,7 @@
                         class="ez-progressive-image lazyload"
                         data-src="{{ image_alias.uri }}"
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
-                        onload="this.style.opacity = 1;this.previousElementSibling.style.opacity = 0;"
+                        onload="this.style.opacity = 1;this.previousElementSibling.style.opacity = 0;this.parentElement.style.height = 'auto';"
                 />
 
                 {% if parameters.caption ?? '' %}
