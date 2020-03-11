@@ -1,9 +1,10 @@
 .ez-progressive {
-  max-width: 100%;
+  width: auto;
   position: relative;
   overflow: hidden;
 
-  img, figcaption {
+  img,
+  figcaption {
     transition: opacity ease 0.5s;
     width: 100%;
     height: auto;
@@ -28,7 +29,7 @@
     bottom: 0;
     padding: 0.5em 1em;
     background-color: #222222;
-    background-color: rgba(0,0,0,0.5);
+    background-color: rgba(0, 0, 0, 0.5);
     color: white;
   }
 

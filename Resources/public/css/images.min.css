@@ -1,1 +1,35 @@
-.ez-progressive{max-width:100%;position:relative;overflow:hidden}.ez-progressive figcaption,.ez-progressive img{transition:opacity ease .5s;width:100%;height:auto;top:0;left:0}.ez-progressive .ez-progressive-placeholder{filter:blur(10px);position:absolute;opacity:1}.ez-progressive .ez-progressive-image{opacity:0}.ez-progressive figcaption{position:absolute;transition:opacity ease .5s;opacity:0;top:auto;bottom:0;padding:.5em 1em;background-color:#222;background-color:rgba(0,0,0,.5);color:#fff}.ez-progressive:hover figcaption{opacity:1}
+.ez-progressive {
+  width: auto;
+  position: relative;
+  overflow: hidden;
+}
+.ez-progressive figcaption,
+.ez-progressive img {
+  transition: opacity ease 0.5s;
+  width: 100%;
+  height: auto;
+  top: 0;
+  left: 0;
+}
+.ez-progressive .ez-progressive-placeholder {
+  filter: blur(10px);
+  position: absolute;
+  opacity: 1;
+}
+.ez-progressive .ez-progressive-image {
+  opacity: 0;
+}
+.ez-progressive figcaption {
+  position: absolute;
+  transition: opacity ease 0.5s;
+  opacity: 0;
+  top: auto;
+  bottom: 0;
+  padding: 0.5em 1em;
+  background-color: #222;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: #fff;
+}
+.ez-progressive:hover figcaption {
+  opacity: 1;
+}
