@@ -27,9 +27,9 @@
             style: "height: #{parameters.height ?? image_alias.height}px; width: #{parameters.width ?? image_alias.width}px",
         } %}
 
-        {% for alias, matcher in srcset %}
+        {% for alias, matcher in parameters.srcset|default({}) %}
             {% set tmp_alias = ez_image_alias( field, versionInfo, alias ) %}
-            {% set tmp_src = tmp_alias ? asset( tmp_alias.uri ) : '//:0' %}
+            {% set tmp_src = tmp_alias ? asset( tmp_alias.uri )|replace({' ': '%20'}) : '//:0' %}
             {% set data_srcset = data_srcset | merge(["#{tmp_src} #{matcher}"]) %}
         {% endfor %}
 
@@ -51,9 +51,9 @@
                 />
                 <img
                         class="ez-progressive-image lazyload"
-                        data-src="{{ image_alias.uri }}"
-                        {% if data_srcset is not empty %}data-srcset="{{ data_srcset | join(', ') }}"{% endif %}
-                        {% if sizes is defined %}data-sizes="{{ sizes }}"{% endif %}
+                        data-src="{{ image_alias.uri|replace({' ': '%20'}) }}"
+                        {% if data_srcset is not empty %}data-srcset="{{ data_srcset|join(', ') }}"{% endif %}
+                        {% if parameters.sizes is defined %}data-sizes="{{ parameters.sizes }}"{% endif %}
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
                         onload="this.style.opacity = 1;this.previousElementSibling.style.opacity = 0;this.parentElement.style.height = 'auto';"
                 />
