@@ -1,6 +1,7 @@
 {# This field accepts the following parameters:
  #   - parameters:
  #      - alias         (string)        Defaults to "original" (e.g. image originally uploaded)
+ #      - srcset        (array)         
  #      - class         (string)        Allows setting CSS custom class name for the figure element
  #      - width         (int|string)    Allows forcing width of the image in the HTML
  #      - height        (int|string)    Allows forcing height of the image in the HTML
@@ -16,6 +17,7 @@
 {% block ezimage_field %}
 {% spaceless %}
     {% if not ez_is_field_empty( content, field ) %}
+        {% set data_srcset = [] %}
         {% set exact_fit = parameters.exact ?? parameters.width ?? parameters.height ?? false %}
         {% set image_alias = ez_image_alias( field, versionInfo, parameters.alias ?? 'original' ) %}
         {% set placeholder = ez_image_alias( field, versionInfo, 'ez_progressive_placeholder' ) %}
@@ -24,6 +26,12 @@
             class: "ez-progressive #{attr.class ?? ''} #{parameters.class ?? ''}" | trim,
             style: "height: #{parameters.height ?? image_alias.height}px; width: #{parameters.width ?? image_alias.width}px",
         } %}
+
+        {% for alias, matcher in srcset %}
+            {% set tmp_alias = ez_image_alias( field, versionInfo, alias ) %}
+            {% set tmp_src = tmp_alias ? asset( tmp_alias.uri ) : '//:0' %}
+            {% set data_srcset = data_srcset | merge(["#{tmp_src} #{matcher}"]) %}
+        {% endfor %}
 
         <figure class="{{ attributes.class | e('html_attr') }}" style="{{ exact_fit ? attributes.style | e('html_attr') : 'height: ' ~ parameters.height ?? image_alias.height ~ 'px;'}}">
             {% if parameters.link ?? {} is not empty %}
@@ -44,6 +52,8 @@
                 <img
                         class="ez-progressive-image lazyload"
                         data-src="{{ image_alias.uri }}"
+                        {% if data_srcset is not empty %}data-srcset="{{ data_srcset | join(', ') }}"{% endif %}
+                        {% if sizes is defined %}data-sizes="{{ sizes }}"{% endif %}
                         alt="{{ parameters.alt ?? field.value.alternativeText }}"
                         onload="this.style.opacity = 1;this.previousElementSibling.style.opacity = 0;this.parentElement.style.height = 'auto';"
                 />
