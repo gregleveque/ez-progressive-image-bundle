@@ -67,7 +67,7 @@ class ImageExtension extends BaseImageExtension
                 'height'        => $imageVariation->height,
                 'name'          => $imageVariation->name,
                 'imageId'       => $imageVariation->imageId,
-                'uri'           => preg_replace('/https?:/', '', $imageVariation->uri),
+                'uri'           => preg_replace('/(https?:\/\/[^:\/]+:?(\d+)?)/', '', $imageVariation->uri),
                 'dirPath'       => $imageVariation->dirPath,
                 'fileName'      => $imageVariation->fileName,
                 'fileSize'      => $imageVariation->fileSize,
