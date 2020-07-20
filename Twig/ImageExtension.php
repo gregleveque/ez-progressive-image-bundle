@@ -59,13 +59,16 @@ class ImageExtension extends BaseImageExtension
     {
         /** @var ImageVariation $imageVariation */
         $imageVariation = parent::getImageVariation($field, $versionInfo, $variationName);
+        if ($imageVariation == null) {
+            return new ImageVariation();
+        }
         $base64 = $this->getBase64($field->value->id, $variationName);
 
         return new ImageVariation(
             [
-                'width'         => $imageVariation->width,
-                'height'        => $imageVariation->height,
-                'name'          => $imageVariation->name,
+                'width'         => $imageVariation->width ?? 0,
+                'height'        => $imageVariation->height ?? 0,
+                'name'          => $imageVariation->name ?? '',
                 'imageId'       => $imageVariation->imageId,
                 'uri'           => preg_replace('/(https?:\/\/[^:\/]+:?(\d+)?)/', '', $imageVariation->uri),
                 'dirPath'       => $imageVariation->dirPath,
