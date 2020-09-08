@@ -1,4 +1,3 @@
-
 {
   "name": "gregleveque/ez-progressive-image-bundle",
   "description": "Display images like Medium with a low resolution placeholder.",
@@ -27,6 +26,8 @@
     }
   },
   "extra": {
-    "branch-alias": "2.0.x-dev"
+    "branch-alias": {
+      "dev-master": "2.0.x-dev"
+    }
   }
-
+}
