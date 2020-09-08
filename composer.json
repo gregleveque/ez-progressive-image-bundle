@@ -19,7 +19,7 @@
   ],
   "minimum-stability": "dev",
   "require": {
-    "ezsystems/ezpublish-kernel": "^6.0|^7.0"
+    "ezsystems/ezplatform-kernel": "^1.1"
   },
   "autoload": {
     "psr-4": {
