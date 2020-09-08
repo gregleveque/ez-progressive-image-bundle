@@ -25,5 +25,8 @@
     "psr-4": {
       "Gie\\EzProgressiveImageBundle\\": ""
     }
+  },
+  "extra": {
+    "branch-alias": "2.0.x-dev"
   }
-}
+
