@@ -16,7 +16,6 @@
       "email": "gregory.leveque.gie@gmail.com"
     }
   ],
-  "minimum-stability": "dev",
   "require": {
     "ezsystems/ezplatform-kernel": "^1.1"
   },
