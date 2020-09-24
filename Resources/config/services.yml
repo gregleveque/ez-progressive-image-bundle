@@ -14,3 +14,23 @@ services:
                 - '%ez.progressive.image.placeholder.variation.name%'
         tags:
              - { name: twig.extension }
+
+    ez.progressive.image.admin.css:
+      autowire: true
+      autoconfigure: false
+      public: false
+      parent: EzSystems\EzPlatformAdminUi\Component\LinkComponent
+      arguments:
+        $href: '/bundles/ezprogressiveimage/css/images.min.css'
+      tags:
+        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+
+    ez.progressive.image.admin.js:
+      autowire: true
+      autoconfigure: false
+      public: false
+      parent: EzSystems\EzPlatformAdminUi\Component\ScriptComponent
+      arguments:
+        $src: '/bundles/ezprogressiveimage/js/lazysizes.min.js'
+      tags:
+        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
