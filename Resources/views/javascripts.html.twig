@@ -1,0 +1,9 @@
+{% set prefix = '/bundles/ezprogressiveimage/js/' %}
+<script src="{{ asset(prefix ~ 'ls.parent-fit.min.js') }}"></script>
+<script src="{{ asset(prefix ~ 'ls.blur-up.min.js') }}"></script>
+<script src="{{ asset(prefix ~ 'lazysizes.min.js') }}"></script>
+<script type="text/javascript">
+  function loadJS(u) {var r=document.getElementsByTagName("script")[0],s=document.createElement("script");s.src=u;r.parentNode.insertBefore(s,r);}
+  if (!window.HTMLPictureElement || !('sizes' in document.createElement('img'))) loadJS('{{ asset(prefix ~ 'ls.respimg.min.js') }}');
+  if (!('object-fit' in window.document.createElement('a').style)) loadJS('{{ asset(prefix ~ 'ls.object-fit.min.js') }}');
+</script>

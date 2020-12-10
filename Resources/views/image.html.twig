@@ -1,0 +1,60 @@
+{# This template accepts this config schema:
+ #   - config:                      (string|object)
+ #      - default                   (string)        The default alias
+ #      - [mediaQueries]            (string)        The aliases for these queries
+ # This template accepts the following parameters:
+ #   - parameters:
+ #      - class                     (string)        Allows setting CSS custom class name for the figure element
+ #      - alt                       (string)        Allows setting alt attribute of the image tag
+ #      - parent-fit                (string)        Allows setting the parent-fit data attribute [cover|contain]
+ #      - object-fit                (string)        Allows setting the object-fit CSS style [cover|contain]
+ #      - caption                   (string)        Allows forcing a caption to the figure element
+ #      - captionFieldIdentifier    (string)        Allows setting the field identifier for caption
+ #
+#}
+
+{% macro generate_src(content, identifier, alias, empty_gif = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==') %}
+    {% set values = {
+        'low': ez_image_alias(content.getField(identifier), content.versionInfo, alias ~ '.placeholder'),
+        '1x': ez_image_alias(content.getField(identifier), content.versionInfo, alias),
+        '2x': ez_image_alias(content.getField(identifier), content.versionInfo, alias ~ '.2x'),
+        '3x': ez_image_alias(content.getField(identifier), content.versionInfo, alias ~ '.3x'),
+    } %}
+
+    {% if alias is empty %}
+        src="{{ empty_gif }}"
+    {% else %}
+        src="{{ values['1x'].uri }}"
+        srcset="{{ empty_gif }}"
+        data-srcset="{{ values['1x'].uri }}, {{ values['2x'].uri }} {{ values['2x'].width }}w, {{ values['3x'].uri }} {{ values['3x'].width }}w"
+        data-lowsrc="{{- 'data:' ~ values.low.mimeType ~ ';base64,' ~ values.low.info -}}"
+    {% endif %}
+
+{% endmacro  %}
+
+{% apply spaceless %}
+    {% if not ez_field_is_empty(content, identifier) %}
+        {% set base_image = ez_image_alias(content.getField(identifier), content.versionInfo, config.default) %}
+        <figure class="ez-progressive {{ parameters.class | e('html_attr') }}" style="height: {{ base_image.height }}px;">
+        {% if config|length > 1 %}
+            <picture>
+                <!--[if IE 9]><audio style="display: none;"><![endif]-->
+                {%- for media, alias in config | filter((_, k) => k != 'default') -%}
+                    <source media="{{- media -}}" {{ _self.generate_src(content, identifier, alias)}}>
+                {%- endfor -%}
+                <!--[if IE 9]></audio><![endif]-->
+
+                <img class="lazyload {{ parameters['object-fit'] }}" alt="{{ parameters.alt }}" data-sizes="auto" data-parent-fit="{{ parameters['parent-fit'] }}" {{- _self.generate_src(content, identifier, config.default) -}} />
+            </picture>
+        {% else %}
+            <img class="lazyload {{ parameters['object-fit'] }}" alt="{{ parameters.alt }}" data-sizes="auto" data-parent-fit="{{ parameters['parent-fit'] }}" {{- _self.generate_src(content, identifier, config.default) -}} />
+        {% endif %}
+            {% if parameters.caption is not empty or content.fields[parameters.captionFieldIdentifier] is defined %}
+                <figcaption>
+                    {{ parameters.caption is not empty ? parameters.caption|raw : ez_render_field(content, parameters.captionFieldIdentifier) }}
+                </figcaption>
+            {% endif %}
+        </figure>
+
+    {% endif %}
+{% endapply %}

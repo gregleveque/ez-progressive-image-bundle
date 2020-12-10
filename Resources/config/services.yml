@@ -1,36 +1,42 @@
 parameters:
-    ez.progressive.image.twig.extension.class: Gie\EzProgressiveImageBundle\Twig\ImageExtension
-    ez.progressive.image.placeholder.variation.name: 'ez_progressive_placeholder'
+  ez.progressive.image.placeholder.variation.name: 'ez_progressive_placeholder'
+  ez.progressive.image.placeholder.suffix: '.placeholder'
+  ez.progressive.image.pixel_density.ratios: [2, 3]
 
 services:
-    ez.progressive.image.twig.extension:
-        class: '%ez.progressive.image.twig.extension.class%'
-        parent: ezpublish.twig.extension.image
-        calls:
-            - method: setConfig
-              arguments:
-                - '@ezpublish.image_alias.variation_path_generator'
-                - '@ezpublish.fieldType.ezimage.io_service'
-                - '%ez.progressive.image.placeholder.variation.name%'
-        tags:
-             - { name: twig.extension }
 
-    ez.progressive.image.admin.css:
-      autowire: true
-      autoconfigure: false
-      public: false
-      parent: EzSystems\EzPlatformAdminUi\Component\LinkComponent
-      arguments:
-        $href: '/bundles/ezprogressiveimage/css/images.min.css'
-      tags:
-        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+  ez.progressive.image.twig.extension:
+    class: Gie\EzProgressiveImageBundle\Twig\Ez\ImageExtension
+    parent: ezpublish.twig.extension.image
+    calls:
+      - method: setConfig
+        arguments:
+          - '@ezpublish.image_alias.variation_path_generator'
+          - '@ezpublish.fieldType.ezimage.io_service'
+          - '%ez.progressive.image.placeholder.suffix%'
+    tags:
+      - { name: twig.extension }
 
-    ez.progressive.image.admin.js:
-      autowire: true
-      autoconfigure: false
-      public: false
-      parent: EzSystems\EzPlatformAdminUi\Component\ScriptComponent
-      arguments:
-        $src: '/bundles/ezprogressiveimage/js/lazysizes.min.js'
-      tags:
-        - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+  Gie\EzProgressiveImageBundle\Twig\Utility\ImageExtension:
+    autowire: true
+    tags:
+      - { name: twig.extension }
+
+  Gie\EzProgressiveImageBundle\Twig\Utility\ImageRuntime:
+    autowire: true
+    tags:
+      - { name: twig.runtime }
+
+  ez.progressive.image.admin.css:
+    parent: EzSystems\EzPlatformAdminUi\Component\LinkComponent
+    arguments:
+      $href: '/bundles/ezprogressiveimage/css/images.min.css'
+    tags:
+      - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }
+
+  ez.progressive.image.admin.js:
+    parent: EzSystems\EzPlatformAdminUi\Component\TwigComponent
+    arguments:
+      $template: '@@EzProgressiveImage/javascripts.html.twig'
+    tags:
+      - { name: ezplatform.admin_ui.component, group: 'stylesheet-head' }

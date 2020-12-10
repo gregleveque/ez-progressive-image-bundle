@@ -2,11 +2,15 @@ system:
     default:
         image_variations:
             ez_progressive_placeholder:
-                reference: null
+                reference: ~
                 filters:
-                    -
-                        name: geometry/scale
-                        params: [24, 24]
+                    - { name: geometry/scale, params: [24, 24] }
+                post_processors:
+                    jpegoptim: { strip_all: true, max: 60 }
+            ez_progressive_admin:
+                reference: ~
+                filters:
+                    - { name: geometry/scaledownonly, params: [900, 900] }
         field_templates:
             -
                 template: '@EzProgressiveImage/fields/ez_image_field.html.twig'

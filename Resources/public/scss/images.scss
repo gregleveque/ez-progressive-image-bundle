@@ -1,39 +1,45 @@
 .ez-progressive {
-  width: auto;
   position: relative;
-  overflow: hidden;
+  display: block;
+  height: 0;
+  width: 100%;
+  max-width: 100%;
+  margin: 0;
 
-  img,
-  figcaption {
-    transition: opacity ease 0.5s;
-    width: 100%;
-    height: auto;
+  .ls-blur-up-is-loading,
+  .lazyload:not([src]) {
+    visibility: hidden;
+  }
+
+  img {
+    position: absolute;
     top: 0;
     left: 0;
+    width: 100%;
+    height: 100%;
+    display: block;
+    /* only if you want to change the blur-up option from always to auto or want to use blur up effect without a lowsrc image. */
+    font-family: "blur-up: auto";
+
+    &.cover {
+      font-family: "object-fit: cover";
+      object-fit: cover;
+    }
+
+    &.contain {
+      font-family: "object-fit: contain";
+      object-fit: contain;
+    }
   }
 
-  .ez-progressive-placeholder {
+  .ls-blur-up-img {
     filter: blur(10px);
-    position: absolute;
     opacity: 1;
-  }
-  .ez-progressive-image {
-    opacity: 0;
+    transition: opacity 1000ms, filter 1500ms;
   }
 
-  figcaption {
-    position: absolute;
-    transition: opacity ease 0.5s;
+  .ls-blur-up-img.ls-inview.ls-original-loaded {
     opacity: 0;
-    top: auto;
-    bottom: 0;
-    padding: 0.5em 1em;
-    background-color: #222222;
-    background-color: rgba(0, 0, 0, 0.5);
-    color: white;
-  }
-
-  &:hover figcaption {
-    opacity: 1;
+    filter: blur(5px);
   }
 }

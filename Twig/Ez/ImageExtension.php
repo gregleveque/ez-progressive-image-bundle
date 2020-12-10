@@ -1,8 +1,8 @@
 <?php
 
-namespace Gie\EzProgressiveImageBundle\Twig;
+namespace Gie\EzProgressiveImageBundle\Twig\Ez;
 
-use eZ\Publish\Core\MVC\Symfony\Templating\Twig\Extension\ImageExtension as BaseImageExtension;
+use eZ\Publish\Core\MVC\Symfony\Templating\Twig\Extension\ImageExtension as EzImageExtension;
 use eZ\Bundle\EzPublishCoreBundle\Imagine\VariationPathGenerator;
 use eZ\Publish\Core\IO\IOServiceInterface;
 use eZ\Publish\API\Repository\Values\Content\Field;
@@ -11,7 +11,7 @@ use eZ\Publish\SPI\Variation\Values\ImageVariation;
 use eZ\Publish\Core\Base\Exceptions\NotFoundException;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentValue;
 
-class ImageExtension extends BaseImageExtension
+class ImageExtension extends EzImageExtension
 {
 
     /**
@@ -25,9 +25,9 @@ class ImageExtension extends BaseImageExtension
     private $ioService;
 
     /**
-     * @var string $placeholderVariationName
+     * @var string $placeholderSuffix
      */
-    protected $placeholderVariationName;
+    protected $placeholderSuffix;
 
     /**
      * @param VariationPathGenerator $variationPathGenerator
@@ -37,11 +37,11 @@ class ImageExtension extends BaseImageExtension
     public function setConfig(
         VariationPathGenerator $variationPathGenerator,
         IOServiceInterface $ioService,
-        string $placeholderVariationName
+        string $placeholderSuffix
     ) {
         $this->variationPathGenerator = $variationPathGenerator;
         $this->ioService = $ioService;
-        $this->placeholderVariationName = $placeholderVariationName;
+        $this->placeholderSuffix = $placeholderSuffix;
     }
 
     /**
@@ -90,7 +90,7 @@ class ImageExtension extends BaseImageExtension
      */
     private function getBase64(string $originalPath, string $variationName)
     {
-        if ($variationName === $this->placeholderVariationName) {
+        if (strpos($variationName, $this->placeholderSuffix)) {
             $variationPath = $this->variationPathGenerator->getVariationPath(
                 $originalPath,
                 $variationName
