@@ -57,11 +57,25 @@ class ImageExtension extends EzImageExtension
      */
     public function getImageVariation(Field $field, VersionInfo $versionInfo, $variationName)
     {
-        /** @var ImageVariation $imageVariation */
-        $imageVariation = parent::getImageVariation($field, $versionInfo, $variationName);
-        if ($imageVariation == null) {
-            return new ImageVariation();
+        $imageVariation = null;
+        $base64 = 'data:image/gif;base64,R0lGODlhAQABAIAAAMLCwgAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==';
+
+        try {
+            /** @var ImageVariation $imageVariation */
+            $imageVariation = parent::getImageVariation($field, $versionInfo, $variationName);
+        } finally {
+            if (!$imageVariation) {
+                return new ImageVariation(
+                    [
+                        'width'     => 1,
+                        'height'    => 1,
+                        'uri'       => $base64,
+                        'info'      => $base64,
+                    ]
+                );
+            }
         }
+
         $base64 = $this->getBase64($field->value->id, $variationName);
 
         return new ImageVariation(
