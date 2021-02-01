@@ -9,7 +9,7 @@
         'captionFieldIdentifier': 'caption'
     } %}
     {% set default_config = { 'default': parameters.alias|default('ez_progressive_admin') } %}
-    {% set parameters = parameters|merge(default_parameters) %}
+    {% set parameters = default_parameters|merge(parameters) %}
     {% include '@EzProgressiveImage/image.html.twig' with {
         'config': parameters.config|default(default_config),
         'identifier': field.fieldDefIdentifier
