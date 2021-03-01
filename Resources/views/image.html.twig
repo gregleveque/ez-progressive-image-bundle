@@ -26,7 +26,7 @@
     {% else %}
         src="{{ values['1x'].uri }}"
         srcset="{{ empty_gif }}"
-        data-srcset="{{ values['1x'].uri }}, {{ values['2x'].uri }} {{ values['2x'].width }}w, {{ values['3x'].uri }} {{ values['3x'].width }}w"
+        data-srcset="{{ values['1x'].uri|url_encode }}, {{ values['2x'].uri|url_encode }} {{ values['2x'].width }}w, {{ values['3x'].uri|url_encode }} {{ values['3x'].width }}w"
         data-lowsrc="{{- 'data:' ~ values.low.mimeType ~ ';base64,' ~ values.low.info -}}"
     {% endif %}
 
