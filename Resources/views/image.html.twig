@@ -24,9 +24,9 @@
     {% if alias is empty %}
         src="{{ empty_gif }}"
     {% else %}
-        src="{{ values['1x'].uri|url_encode }}"
+        src="{{ values['1x'].uri|replace({' ': '%20'}) }}"
         srcset="{{ empty_gif }}"
-        data-srcset="{{ values['1x'].uri|url_encode }}, {{ values['2x'].uri|url_encode }} {{ values['2x'].width }}w, {{ values['3x'].uri|url_encode }} {{ values['3x'].width }}w"
+        data-srcset="{{ values['1x'].uri|replace({' ': '%20'}) }}, {{ values['2x'].uri|replace({' ': '%20'}) }} {{ values['2x'].width }}w, {{ values['3x'].uri|replace({' ': '%20'}) }} {{ values['3x'].width }}w"
         data-lowsrc="{{- 'data:' ~ values.low.mimeType ~ ';base64,' ~ values.low.info -}}"
     {% endif %}
 
