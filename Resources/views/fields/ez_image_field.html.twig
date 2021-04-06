@@ -2,7 +2,8 @@
 {% apply spaceless %}
     {% set default_parameters = {
         'class': '',
-        'alt': '',
+        'lazy': true,
+        'alt': field.value.alternativeText|default(''),
         'parent-fit': 'cover',
         'object-fit': 'cover',
         'caption': '',
