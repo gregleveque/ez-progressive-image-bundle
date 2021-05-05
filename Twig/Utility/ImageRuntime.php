@@ -65,8 +65,8 @@ class ImageRuntime implements RuntimeExtensionInterface
             throw new InvalidArgumentException('fieldIndentifier', "Field $fieldIdentifier is not an image field or an image asset field.");
         }
 
-        if ($field->fieldTypeIdentifier === 'ezimageasset') {
-            $content = $this->contentService->loadContent($field->value->destinationContentId);
+        if ($field->fieldTypeIdentifier === 'ezimageasset' && $field->value->destinationContentId) {
+            $content = $this->contentService->loadContent((int)$field->value->destinationContentId);
             $fieldIdentifier = $this->mapper->getContentFieldIdentifier($content);
         }
 
