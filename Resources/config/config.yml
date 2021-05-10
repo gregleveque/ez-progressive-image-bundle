@@ -13,5 +13,5 @@ system:
                     - { name: geometry/scaledownonly, params: [900, 900] }
         field_templates:
             -
-                template: '@EzProgressiveImage/fields/ez_image_field.html.twig'
+                template: '@ezdesign/ezprogressiveimage/fields/ez_image_field.html.twig'
                 priority: 100

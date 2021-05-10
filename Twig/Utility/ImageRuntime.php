@@ -8,12 +8,13 @@ use eZ\Publish\API\Repository\ContentService;
 use eZ\Publish\API\Repository\Values\Content\Content;
 use eZ\Publish\Core\Base\Exceptions\InvalidArgumentException;
 use eZ\Publish\Core\FieldType\ImageAsset\AssetMapper;
+use Gie\EzProgressiveImageBundle\Twig\Ez\ImageExtension;
 use Twig\Environment;
 use Twig\Extension\RuntimeExtensionInterface;
 
 class ImageRuntime implements RuntimeExtensionInterface
 {
-    /** @var string  */
+    /** @var array  */
     const DEFAULT_PARAMS = [
         'class' => '',
         'alt' => '',
@@ -21,6 +22,7 @@ class ImageRuntime implements RuntimeExtensionInterface
         'object-fit' => 'cover',
         'caption' => '',
         'captionFieldIdentifier' => 'caption',
+        'styles' => '',
     ];
 
     /** @var \Twig\Environment */
@@ -32,16 +34,23 @@ class ImageRuntime implements RuntimeExtensionInterface
     /** @var \eZ\Publish\API\Repository\ContentService */
     private $contentService;
 
+    /** @var \Gie\EzProgressiveImageBundle\Twig\Ez\ImageExtension  */
+    private $imageExtension;
     /**
      * ImageRuntime constructor.
      * @param \Twig\Environment $twig
      * @param \eZ\Publish\Core\FieldType\ImageAsset\AssetMapper $mapper\
      */
-    public function __construct(Environment $twig, AssetMapper $mapper, ContentService $contentService)
-    {
+    public function __construct(
+        Environment $twig,
+        AssetMapper $mapper,
+        ContentService $contentService,
+        ImageExtension $imageExtension
+    ) {
         $this->twig = $twig;
         $this->mapper = $mapper;
         $this->contentService = $contentService;
+        $this->imageExtension = $imageExtension;
     }
 
     /**
@@ -71,13 +80,34 @@ class ImageRuntime implements RuntimeExtensionInterface
         }
 
         $alt = $content->getFieldValue($fieldIdentifier)->alternativeText;
+        $config = $this->getConfig($config);
 
-        return $this->twig->render('@EzProgressiveImage/image.html.twig', [
-            'content' => $content,
-            'identifier' => $fieldIdentifier,
-            'config' => $this->getConfig($config),
-            'parameters' => array_replace_recursive(self::DEFAULT_PARAMS, ['alt' => $alt],  $params),
-        ]);
+        if ($params['raw'] ?? false) {
+            $field = $content->getField($fieldIdentifier);
+            $versionInfo = $content->getVersionInfo();
+            // To have all aliases generated
+            $aliases = [
+                'low' => $this->imageExtension->getImageVariation($field, $versionInfo, $config['default'] . '.placeholder'),
+                '1x' =>  $this->imageExtension->getImageVariation($field, $versionInfo, $config['default']),
+                '2x' => $this->imageExtension->getImageVariation($field, $versionInfo, $config['default'] . '.2x'),
+                '3x' => $this->imageExtension->getImageVariation($field, $versionInfo, $config['default'] . '.3x'),
+            ];
+
+            return [
+                'alt' => $alt,
+                'size' => [$aliases['1x']->width, $aliases['1x']->height],
+                'src' => str_replace('', '%20', $aliases['1x']->uri),
+                'srcset' => [$aliases['2x']->width . 'w', $aliases['3x']->width . 'w'],
+                'low' => 'data:' . $aliases['low']->mimeType . ';base64,' . $aliases['low']->info,
+            ];
+        } else {
+            return $this->twig->render('@ezdesign/ezprogressiveimage/image.html.twig', [
+                'content' => $content,
+                'identifier' => $fieldIdentifier,
+                'config' => $config,
+                'parameters' => array_replace_recursive(self::DEFAULT_PARAMS, ['alt' => $alt], $params),
+            ]);
+        }
     }
 
     private function getConfig($config)

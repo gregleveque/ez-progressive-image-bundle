@@ -24,6 +24,8 @@ services:
 
   Gie\EzProgressiveImageBundle\Twig\Utility\ImageRuntime:
     autowire: true
+    arguments:
+      $imageExtension: '@ez.progressive.image.twig.extension'
     tags:
       - { name: twig.runtime }
 

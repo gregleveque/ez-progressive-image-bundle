@@ -10,7 +10,7 @@
  #      - object-fit                (string)        Allows setting the object-fit CSS style [cover|contain]
  #      - caption                   (string)        Allows forcing a caption to the figure element
  #      - captionFieldIdentifier    (string)        Allows setting the field identifier for caption
- #
+ #      - styles                    (string)        Custom styles
 #}
 
 {% macro generate_src(content, identifier, alias, empty_gif = 'data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==') %}
@@ -35,7 +35,7 @@
 {% apply spaceless %}
     {% if not ez_field_is_empty(content, identifier) %}
         {% set base_image = ez_image_alias(content.getField(identifier), content.versionInfo, config.default) %}
-        <figure class="ez-progressive {{ parameters.class | e('html_attr') }}" style="height: {{ base_image.height }}px;">
+        <figure class="ez-progressive {{ parameters.class | e('html_attr') }}" style="{{ parameters['styles'] ?: ('padding-bottom: ' ~ ((base_image.height / base_image.width) * 100) ~ '%') }}">
         {% if config|length > 1 %}
             <picture>
                 <!--[if IE 9]><audio style="display: none;"><![endif]-->

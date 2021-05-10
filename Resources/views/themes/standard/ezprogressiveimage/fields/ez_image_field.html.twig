@@ -7,11 +7,12 @@
         'parent-fit': 'cover',
         'object-fit': 'cover',
         'caption': '',
-        'captionFieldIdentifier': 'caption'
+        'captionFieldIdentifier': 'caption',
+        'styles': '',
     } %}
     {% set default_config = { 'default': parameters.alias|default('ez_progressive_admin') } %}
     {% set parameters = default_parameters|merge(parameters) %}
-    {% include '@EzProgressiveImage/image.html.twig' with {
+    {% include '@ezdesign/ezprogressiveimage/image.html.twig' with {
         'config': parameters.config|default(default_config),
         'identifier': field.fieldDefIdentifier
     } %}
