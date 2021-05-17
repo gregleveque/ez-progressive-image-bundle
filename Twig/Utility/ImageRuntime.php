@@ -20,6 +20,7 @@ class ImageRuntime implements RuntimeExtensionInterface
         'alt' => '',
         'parent-fit' => 'cover',
         'object-fit' => 'cover',
+        'disable_caption' => false,
         'caption' => '',
         'captionFieldIdentifier' => 'caption',
         'styles' => '',

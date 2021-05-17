@@ -50,7 +50,7 @@
         {% else %}
             <img class="lazyload {{ parameters['object-fit'] }}" alt="{{ parameters.alt }}" data-sizes="auto" data-parent-fit="{{ parameters['parent-fit'] }}" {{- _self.generate_src(content, identifier, config.default) -}} />
         {% endif %}
-            {% if not (parameters.disable_caption ?? false) or parameters.caption is not empty or content.fields[parameters.captionFieldIdentifier] is defined %}
+            {% if not parameters.disable_caption or parameters.caption is not empty or content.fields[parameters.captionFieldIdentifier] is defined %}
                 <figcaption>
                     {{ parameters.caption is not empty ? parameters.caption|raw : ez_render_field(content, parameters.captionFieldIdentifier) }}
                 </figcaption>
