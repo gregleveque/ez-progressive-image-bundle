@@ -69,7 +69,7 @@ class ImageExtension extends EzImageExtension
                     [
                         'width'     => 1,
                         'height'    => 1,
-                        'uri'       => $base64,
+                        'uri'       => '',
                         'info'      => $base64,
                     ]
                 );
