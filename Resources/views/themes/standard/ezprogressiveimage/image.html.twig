@@ -34,9 +34,11 @@
 {% endmacro  %}
 
 {% apply spaceless %}
+    {% set fit = parameters['fit']|default(false) %}
     {% if not ez_field_is_empty(content, identifier) %}
         {% set base_image = ez_image_alias(content.getField(identifier), content.versionInfo, config.default) %}
-        <figure class="ez-progressive {{ parameters.class | e('html_attr') }}" style="{{ parameters['styles'] ?: ('padding-bottom: ' ~ ((base_image.height / base_image.width) * 100) ~ '%') }}">
+
+        <figure class="ez-progressive {{ parameters.class | e('html_attr') }}" style="{{ parameters['styles'] ?: ('padding-bottom: ' ~ ((base_image.height / base_image.width) * 100) ~ '%') }}; {% if fit %} width: {{ base_image.width ~ 'px' }}; height: {{ base_image.height ~ 'px' }} {% endif %}" >
         {% if config|length > 1 %}
             <picture>
                 <!--[if IE 9]><audio style="display: none;"><![endif]-->
